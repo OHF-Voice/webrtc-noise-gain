@@ -27,6 +27,4 @@ subprocess.check_call(pip + ["install", "-e", str(_PROGRAM_DIR)])
 
 if args.dev:
     # Install dev requirements
-    subprocess.check_call(
-        pip + ["install", "-e", f"{_PROGRAM_DIR}[dev]"]
-    )
+    subprocess.check_call(pip + ["install", "-r", str(_DIR / "requirements_dev.txt")])
