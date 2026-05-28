@@ -2,16 +2,15 @@ import os
 import platform
 from pathlib import Path
 
-# Available at setup time due to pyproject.toml
-from pybind11.setup_helpers import Pybind11Extension, build_ext
-from setuptools import setup
+from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext
 from setuptools._distutils.unixccompiler import UnixCCompiler
 
 _DIR = Path(__file__).parent
 _SOURCE_DIR = _DIR / "webrtc-audio-processing"
 _WEBRTC_DIR = _SOURCE_DIR / "webrtc-audio-processing-1"
 
-__version__ = "1.2.5"
+__version__ = "1.3.0"
 
 # webrtc/
 #   rtc_base/
@@ -513,21 +512,12 @@ class PatchedBuildExt(build_ext):
         build_ext.build_extensions(self, *args, **kwargs)
 
 
-class PatchedPybind11Extension(Pybind11Extension):
-    @property
-    def cxx_std(self) -> int:
-        return super().cxx_std
-
-    @cxx_std.setter
-    def cxx_std(self, level: int) -> None:
-        pass  # Stop pollution of cflags
-
-
 ext_modules = [
-    PatchedPybind11Extension(
-        name="webrtc_noise_gain_cpp",
+    Extension(
+        name="webrtc_noise_gain.webrtc_noise_gain_cpp",
         language="c++",
-        sources=[str(_DIR / "python.cpp")]
+        py_limited_api=True,
+        sources=[str(_DIR / "src" / "webrtc_noise_gain_cpp.cpp")]
         + [str(_WEBRTC_DIR / "rtc_base" / f) for f in base_sources]
         + [str(_WEBRTC_DIR / "api" / f) for f in api_sources]
         + [str(_WEBRTC_DIR / "system_wrappers" / f) for f in system_wrappers_sources]
@@ -551,7 +541,7 @@ ext_modules = [
             for f in absl_sources
         ],
         extra_compile_args=common_cflags + system_cflags + machine_cflags,
-        define_macros=[("VERSION_INFO", __version__)],
+        define_macros=[("VERSION_INFO", __version__), ("Py_LIMITED_API", "0x03090000")],
         include_dirs=[
             str(_SOURCE_DIR),
             str(_WEBRTC_DIR),
@@ -561,19 +551,35 @@ ext_modules = [
     ),
 ]
 
+# Get long description from README
+readme_path = Path(__file__).parent / "README.md"
+long_description = ""
+if readme_path.exists():
+    long_description = readme_path.read_text(encoding="utf-8")
 
 setup(
     name="webrtc_noise_gain",
     version=__version__,
-    author="Michael Hansen",
-    author_email="mike@rhasspy.org",
-    url="https://github.com/rhasspy/webrtc-noise-gain",
     description="Noise suppression and automatic gain with webrtc",
-    long_description="",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="The Home Assistant Authors",
+    author_email="hello@home-assistant.io",
+    url="https://github.com/OHF-voice/webrtc-noise-gain",
     packages=["webrtc_noise_gain"],
     ext_modules=ext_modules,
     cmdclass={"build_ext": PatchedBuildExt},
     zip_safe=False,
-    python_requires=">=3.7",
-    classifiers=["License :: OSI Approved :: MIT License"],
+    python_requires=">=3.9",
+    classifiers=[
+        "License :: OSI Approved :: Apache Software License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: C++",
+        "Operating System :: POSIX :: Linux",
+    ],
 )

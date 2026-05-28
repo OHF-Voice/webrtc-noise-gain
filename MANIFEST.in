@@ -1,2 +1,2 @@
 recursive-include webrtc-audio-processing *
-include python.cpp
+include src/webrtc_noise_gain_cpp.cpp

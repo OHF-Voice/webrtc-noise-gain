@@ -57,5 +57,3 @@ pip3 install --upgrade wheel build
 python3 -m build --wheel
 find dist/
 ```
-
-See also `Dockerfile`

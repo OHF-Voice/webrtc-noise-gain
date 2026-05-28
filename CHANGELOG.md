@@ -1,3 +1,12 @@
+# Changelog
+
+## 1.3.0
+
+- Remove pybind11
+- Transition to ABI3 compatible wheel
+- Minimum Python version is 3.9
+- License in Apache 2
+
 ## 1.2.5
 
 - Fix sdist

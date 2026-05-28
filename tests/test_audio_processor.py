@@ -1,5 +1,4 @@
-import sys
-from pathlib import Path
+"""Tests for webrtc-noise-gain"""
 
 from webrtc_noise_gain import AudioProcessor
 

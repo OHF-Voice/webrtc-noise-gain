@@ -1,2 +1,7 @@
 pytest
-pybind11
+black
+isort
+mypy
+pylint
+flake8
+build

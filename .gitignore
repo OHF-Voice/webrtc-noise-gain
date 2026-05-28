@@ -15,5 +15,5 @@ __pycache__/
 /.venv/
 *.whl
 
-/*.so
+*.so
 /*.wav
