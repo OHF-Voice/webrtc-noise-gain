@@ -5,7 +5,9 @@
 - Remove pybind11
 - Transition to ABI3 compatible wheel
 - Minimum Python version is 3.9
-- License in Apache 2
+- License is Apache 2
+- Add Github workflows
+- Remove 32-bit ARM
 
 ## 1.2.5
 
